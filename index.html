@@ -119,7 +119,93 @@
     NBA Picks | Análisis deportivo
 
   </footer>
+<script>
 
+const SUPABASE_URL = "https://huivxitcuznwaisabvkj.supabase.co/rest/v1/";
+
+const SUPABASE_KEY = "sb_publishable_Stnn0u-ZPbsYykN9PWsi2g_HbqLJKfW";
+
+async function cargarPartidos() {
+
+  const seccion = document.querySelector("main .game");
+
+  if (!seccion) return;
+
+  seccion.textContent = "Cargando partidos...";
+
+  try {
+
+    const url = SUPABASE_URL.replace(/\/rest\/v1\/?$/, "");
+
+    const respuesta = await fetch(
+
+      url + "/rest/v1/nba_games?select=*&order=game_date.asc",
+
+      {
+
+        headers: {
+
+          "apikey": SUPABASE_KEY
+
+        }
+
+      }
+
+    );
+
+    if (!respuesta.ok) throw new Error("Error de conexión");
+
+    const partidos = await respuesta.json();
+
+    seccion.replaceChildren();
+
+    if (partidos.length === 0) {
+
+      seccion.textContent = "Todavía no hay partidos.";
+
+      return;
+
+    }
+
+    partidos.forEach(partido => {
+
+      const tarjeta = document.createElement("div");
+
+      tarjeta.style.marginBottom = "20px";
+
+      const titulo = document.createElement("h3");
+
+      titulo.textContent =
+
+        partido.away_team + " vs " + partido.home_team;
+
+      const estado = document.createElement("p");
+
+      estado.textContent =
+
+        "Estado: " + (partido.game_status || "Pendiente");
+
+      tarjeta.append(titulo, estado);
+
+      seccion.appendChild(tarjeta);
+
+    });
+
+  } catch (error) {
+
+    seccion.textContent =
+
+      "No se pudieron cargar los partidos.";
+
+    console.error(error);
+
+  }
+
+}
+
+cargarPartidos();
+
+</script>
 </body>
 
 </html>
