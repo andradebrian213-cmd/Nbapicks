@@ -311,7 +311,32 @@ async function cargarPartidosNBA() {
 
     const datos = await respuesta.json();
     console.log("Partidos NBA:", datos.games);
-  } catch (error) {
+ 
+const contenedor = document.getElementById("nba-games");
+
+contenedor.innerHTML = "";
+
+if (Array.isArray(datos.games) && datos.games.length > 0) {
+  datos.games.forEach((partido) => {
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "game";
+
+    const titulo = document.createElement("h3");
+    titulo.textContent =
+      (partido.visitor_team?.full_name || "Visitante") +
+      " vs " +
+      (partido.home_team?.full_name || "Local");
+
+    const estado = document.createElement("p");
+    estado.textContent = "Estado: " + (partido.status || "Pendiente");
+
+    tarjeta.append(titulo, estado);
+    contenedor.appendChild(tarjeta);
+  });
+} else {
+  contenedor.textContent = "No hay partidos disponibles.";
+}
+ } catch (error) {
     console.error("Error al cargar NBA:", error);
   }
 }
