@@ -225,6 +225,77 @@ async function cargarPartidos() {
 
 cargarPartidos();
 
+const botonAgregar = document.getElementById("agregar-pick");
+const listaPicks = document.getElementById("parlay-selecciones");
+const resultadoParlay = document.getElementById("parlay-probabilidad");
+
+botonAgregar.addEventListener("click", function () {
+  const pick = document.createElement("div");
+  pick.className = "game";
+  pick.style.marginTop = "12px";
+
+  pick.innerHTML = `
+    <input type="text" placeholder="Equipo o partido"
+      class="equipo-pick">
+
+    <select class="mercado-pick">
+      <option value="Moneyline">Moneyline</option>
+      <option value="Handicap">Hándicap</option>
+      <option value="Total">Total de puntos</option>
+    </select>
+
+    <input type="number" placeholder="Probabilidad %"
+      class="probabilidad-pick" min="1" max="99"
+      step="0.1">
+
+    <button type="button" class="eliminar-pick">
+      Eliminar
+    </button>
+  `;
+
+  listaPicks.appendChild(pick);
+
+  pick.querySelector(".eliminar-pick").addEventListener(
+    "click", function () {
+      pick.remove();
+      calcularParlay();
+    }
+  );
+
+  pick.querySelector(".probabilidad-pick").addEventListener(
+    "input", calcularParlay
+  );
+
+  calcularParlay();
+});
+
+function calcularParlay() {
+  const campos = document.querySelectorAll(".probabilidad-pick");
+  let probabilidad = 1;
+  let completos = 0;
+
+  campos.forEach(function (campo) {
+    const valor = Number(campo.value);
+
+    if (campo.value !== "" && valor > 0 && valor <= 100) {
+      probabilidad *= valor / 100;
+      completos++;
+    }
+  });
+
+  if (completos === 0) {
+    resultadoParlay.textContent =
+      "Agrega picks para calcular tu probabilidad.";
+  } else if (completos !== campos.length) {
+    resultadoParlay.textContent =
+      "Ingresa la probabilidad de todos los picks.";
+  } else {
+    resultadoParlay.textContent =
+      "Probabilidad estimada del parlay: " +
+      (probabilidad * 100).toFixed(2) + "%";
+  }
+}
+
 </script>
 
 
