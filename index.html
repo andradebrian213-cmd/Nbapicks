@@ -338,6 +338,9 @@ if (Array.isArray(datos.games) && datos.games.length > 0) {
 }
  } catch (error) {
     console.error("Error al cargar NBA:", error);
+    
+document.getElementById("nba-games").textContent = "Error al cargar partidos: " + error.message;
+
   }
 }
 
